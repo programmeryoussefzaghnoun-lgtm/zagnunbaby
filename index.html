@@ -4,9 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>ZAGNUN BABY | متجر فخم للأزياء</title>
-    <!-- Google Fonts: خطوط عصرية أنيقة -->
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <!-- Font Awesome 6 (أيقونات) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         * {
@@ -329,37 +327,27 @@
             background: #1a1a1a;
         }
 
-        /* البالونة الحمراء */
+        /* البالونة الحمراء - نسخة محسنة للهواتف */
         .balloon {
             position: fixed;
-            bottom: 30px;
+            bottom: 20px;
             left: 50%;
             transform: translateX(-50%);
-            width: 70px;
-            height: 90px;
+            width: 65px;
+            height: 85px;
             background: radial-gradient(circle at 30% 35%, #ff4444, #cc0000);
             border-radius: 50%;
             cursor: pointer;
             z-index: 1000;
-            transition: bottom 0.1s linear;
             box-shadow: 0 8px 20px rgba(0,0,0,0.3);
-            animation: float 0.3s ease-in-out infinite alternate;
-        }
-        
-        .balloon::before {
-            content: "🎈";
-            position: absolute;
-            top: -25px;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 30px;
-            opacity: 0;
+            will-change: transform, bottom;
+            pointer-events: none;
         }
         
         .balloon::after {
             content: "";
             position: absolute;
-            bottom: -15px;
+            bottom: -12px;
             left: 50%;
             transform: translateX(-50%);
             width: 2px;
@@ -367,46 +355,16 @@
             background: #8B4513;
         }
         
-        .balloon-string {
-            position: absolute;
-            bottom: -15px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 2px;
-            height: 20px;
-            background: #8B4513;
-        }
-        
-        @keyframes float {
-            0% { transform: translateX(-50%) translateY(0px); }
-            100% { transform: translateX(-50%) translateY(-8px); }
-        }
-        
-        /* الإيموجيات المتطايرة */
+        /* إيموجيات متطايرة محسنة */
         .emoji-particle {
             position: fixed;
             font-size: 2rem;
             pointer-events: none;
             z-index: 2001;
-            animation: flyAway 1.5s ease-out forwards;
+            will-change: transform, opacity;
         }
         
-        @keyframes flyAway {
-            0% {
-                opacity: 1;
-                transform: translate(0, 0) scale(0.5);
-            }
-            50% {
-                opacity: 1;
-                transform: translate(var(--x, 0), var(--y, -100px)) scale(1.2);
-            }
-            100% {
-                opacity: 0;
-                transform: translate(var(--x2, 0), var(--y2, -200px)) scale(0.8);
-            }
-        }
-        
-        /* رسالة الترحيب المنبثقة */
+        /* رسالة الترحيب */
         .welcome-message {
             position: fixed;
             top: 50%;
@@ -414,16 +372,15 @@
             transform: translate(-50%, -50%) scale(0);
             background: linear-gradient(135deg, #c5a572, #8b6914);
             color: #0a0a0a;
-            padding: 25px 45px;
+            padding: 20px 40px;
             border-radius: 60px;
-            font-size: 1.8rem;
+            font-size: 1.5rem;
             font-weight: 800;
             font-family: 'Cairo', sans-serif;
             z-index: 2002;
             white-space: nowrap;
             box-shadow: 0 20px 40px rgba(0,0,0,0.5);
             border: 2px solid #ffd700;
-            animation: welcomePop 0.5s ease-out forwards;
             text-align: center;
             direction: rtl;
         }
@@ -434,7 +391,7 @@
                 opacity: 0;
             }
             50% {
-                transform: translate(-50%, -50%) scale(1.2);
+                transform: translate(-50%, -50%) scale(1.1);
             }
             100% {
                 transform: translate(-50%, -50%) scale(1);
@@ -448,7 +405,7 @@
                 opacity: 1;
             }
             100% {
-                transform: translate(-50%, -50%) scale(1.3);
+                transform: translate(-50%, -50%) scale(1.2);
                 opacity: 0;
             }
         }
@@ -470,9 +427,16 @@
                 width: 100%;
             }
             .welcome-message {
-                font-size: 1rem;
-                padding: 15px 25px;
+                font-size: 0.9rem;
+                padding: 12px 20px;
                 white-space: nowrap;
+            }
+            .balloon {
+                width: 55px;
+                height: 70px;
+            }
+            .emoji-particle {
+                font-size: 1.5rem;
             }
         }
     </style>
@@ -519,9 +483,7 @@
 </div>
 
 <script>
-    // =====================================================
-    // 🔥 قائمة بأسماء 24 صورة (ضع أسماء صورك هنا)
-    // =====================================================
+    // قائمة الصور (24 صورة)
     const productImagesList = [
         "1.jpeg", "2.jpeg", "3.jpeg", "4.jpeg", "5.jpeg", "6.jpeg",
         "7.jpeg", "8.jpeg", "9.jpeg", "10.jpeg", "11.jpeg", "12.jpeg",
@@ -595,7 +557,7 @@
     }
     
     // =====================================================
-    // 🎈 تأثير البالونة الحمراء
+    // 🎈 تأثير البالونة - نسخة سريعة ومحسنة للهواتف
     // =====================================================
     
     function createBalloon() {
@@ -603,60 +565,80 @@
         balloon.className = 'balloon';
         document.body.appendChild(balloon);
         
-        let position = 0;
-        const targetPosition = window.innerHeight / 2 - 100;
+        let startTime = null;
+        const startBottom = 20;
+        const targetBottom = window.innerHeight / 2 - 50;
+        const duration = 1200; // 1.2 ثانية فقط (سريع)
         
-        const interval = setInterval(() => {
-            position += 3;
-            balloon.style.bottom = position + 'px';
+        function animate(currentTime) {
+            if (!startTime) startTime = currentTime;
+            const elapsed = currentTime - startTime;
+            const progress = Math.min(elapsed / duration, 1);
             
-            if (position >= targetPosition) {
-                clearInterval(interval);
+            // حركة سلسة باستخدام easing
+            const easeOutCubic = 1 - Math.pow(1 - progress, 3);
+            const newBottom = startBottom + (targetBottom - startBottom) * easeOutCubic;
+            balloon.style.bottom = newBottom + 'px';
+            
+            if (progress < 1) {
+                requestAnimationFrame(animate);
+            } else {
                 explodeBalloon(balloon);
             }
-        }, 16);
+        }
+        
+        requestAnimationFrame(animate);
     }
     
     function explodeBalloon(balloon) {
-        // إزالة البالونة
         balloon.remove();
         
-        // قائمة الإيموجيات الكثيرة
         const emojis = ['🎈', '🎉', '✨', '💎', '👑', '🔥', '💫', '⭐', '🌟', '💝', '🎊', '❤️', '🧡', '💛', '💚', '💙', '💜', '🖤', '🤍', '🤎', '😍', '🥳', '🎯', '🏆', '💎', '👔', '👕', '🛍️', '💸', '💵'];
         
-        // إنشاء 50 إيموجي متطاير
-        for (let i = 0; i < 50; i++) {
-            setTimeout(() => {
-                const emoji = document.createElement('div');
-                emoji.className = 'emoji-particle';
-                emoji.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+        const centerX = window.innerWidth / 2;
+        const centerY = window.innerHeight / 2 - 50;
+        
+        // إنشاء 40 إيموجي (عدد مناسب للهواتف)
+        for (let i = 0; i < 40; i++) {
+            const emoji = document.createElement('div');
+            emoji.className = 'emoji-particle';
+            emoji.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+            
+            const angle = Math.random() * Math.PI * 2;
+            const velocity = 150 + Math.random() * 200;
+            const vx = Math.cos(angle) * velocity;
+            const vy = Math.sin(angle) * velocity - 100;
+            
+            emoji.style.left = centerX + 'px';
+            emoji.style.top = centerY + 'px';
+            emoji.style.fontSize = (Math.random() * 25 + 18) + 'px';
+            
+            document.body.appendChild(emoji);
+            
+            let startTime = null;
+            const startX = centerX;
+            const startY = centerY;
+            
+            function animateEmoji(currentTime) {
+                if (!startTime) startTime = currentTime;
+                const elapsed = (currentTime - startTime) / 1000;
                 
-                // موقع عشوائي حول مكان انفجار البالونة
-                const startX = window.innerWidth / 2 + (Math.random() - 0.5) * 150;
-                const startY = window.innerHeight / 2 - 50;
-                const randomX = (Math.random() - 0.5) * 300;
-                const randomY = -Math.random() * 250 - 50;
-                const randomX2 = (Math.random() - 0.5) * 400;
-                const randomY2 = -Math.random() * 350 - 100;
-                
-                emoji.style.left = startX + 'px';
-                emoji.style.top = startY + 'px';
-                emoji.style.setProperty('--x', randomX + 'px');
-                emoji.style.setProperty('--y', randomY + 'px');
-                emoji.style.setProperty('--x2', randomX2 + 'px');
-                emoji.style.setProperty('--y2', randomY2 + 'px');
-                emoji.style.fontSize = (Math.random() * 30 + 20) + 'px';
-                
-                document.body.appendChild(emoji);
-                
-                // إزالة الإيموجي بعد انتهاء الحركة
-                setTimeout(() => {
+                if (elapsed >= 1.2) {
                     emoji.remove();
-                }, 1500);
-            }, i * 15);
+                    return;
+                }
+                
+                const x = startX + vx * elapsed;
+                const y = startY + vy * elapsed + 0.5 * 500 * elapsed * elapsed;
+                emoji.style.transform = `translate(${x - centerX}px, ${y - centerY}px)`;
+                emoji.style.opacity = 1 - elapsed / 1.2;
+                
+                requestAnimationFrame(animateEmoji);
+            }
+            
+            requestAnimationFrame(animateEmoji);
         }
         
-        // إظهار رسالة الترحيب
         showWelcomeMessage();
     }
     
@@ -664,21 +646,21 @@
         const messageDiv = document.createElement('div');
         messageDiv.className = 'welcome-message';
         messageDiv.innerHTML = '🎈 اهلاً بك في متجر ZAGNUN BABY 🎈';
+        messageDiv.style.animation = 'welcomePop 0.4s ease-out forwards';
         document.body.appendChild(messageDiv);
         
-        // اختفاء الرسالة بعد 4 ثواني
         setTimeout(() => {
-            messageDiv.style.animation = 'welcomeFadeOut 0.5s ease-out forwards';
+            messageDiv.style.animation = 'welcomeFadeOut 0.4s ease-out forwards';
             setTimeout(() => {
                 messageDiv.remove();
-            }, 500);
-        }, 3500);
+            }, 400);
+        }, 2800);
     }
     
-    // بدء تأثير البالونة بعد تحميل الصفحة بـ 1 ثانية
+    // بدء البالونة بعد تحميل الصفحة (أسرع)
     setTimeout(() => {
         createBalloon();
-    }, 1000);
+    }, 500);
     
     // =====================================================
     // Modal logic
