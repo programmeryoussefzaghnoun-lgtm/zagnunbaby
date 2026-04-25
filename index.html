@@ -327,7 +327,6 @@
             background: #1a1a1a;
         }
 
-        /* البالونة الحمراء - نسخة محسنة للهواتف */
         .balloon {
             position: fixed;
             bottom: 20px;
@@ -355,7 +354,6 @@
             background: #8B4513;
         }
         
-        /* إيموجيات متطايرة محسنة */
         .emoji-particle {
             position: fixed;
             font-size: 2rem;
@@ -364,7 +362,6 @@
             will-change: transform, opacity;
         }
         
-        /* رسالة الترحيب */
         .welcome-message {
             position: fixed;
             top: 50%;
@@ -483,7 +480,6 @@
 </div>
 
 <script>
-    // قائمة الصور (24 صورة)
     const productImagesList = [
         "1.jpeg", "2.jpeg", "3.jpeg", "4.jpeg", "5.jpeg", "6.jpeg",
         "7.jpeg", "8.jpeg", "9.jpeg", "10.jpeg", "11.jpeg", "12.jpeg",
@@ -557,7 +553,7 @@
     }
     
     // =====================================================
-    // 🎈 تأثير البالونة - نسخة سريعة ومحسنة للهواتف
+    // 🎈 تأثير البالونة مع 80 إيموجي
     // =====================================================
     
     function createBalloon() {
@@ -568,14 +564,12 @@
         let startTime = null;
         const startBottom = 20;
         const targetBottom = window.innerHeight / 2 - 50;
-        const duration = 1200; // 1.2 ثانية فقط (سريع)
+        const duration = 1200;
         
         function animate(currentTime) {
             if (!startTime) startTime = currentTime;
             const elapsed = currentTime - startTime;
             const progress = Math.min(elapsed / duration, 1);
-            
-            // حركة سلسة باستخدام easing
             const easeOutCubic = 1 - Math.pow(1 - progress, 3);
             const newBottom = startBottom + (targetBottom - startBottom) * easeOutCubic;
             balloon.style.bottom = newBottom + 'px';
@@ -593,50 +587,52 @@
     function explodeBalloon(balloon) {
         balloon.remove();
         
-        const emojis = ['🎈', '🎉', '✨', '💎', '👑', '🔥', '💫', '⭐', '🌟', '💝', '🎊', '❤️', '🧡', '💛', '💚', '💙', '💜', '🖤', '🤍', '🤎', '😍', '🥳', '🎯', '🏆', '💎', '👔', '👕', '🛍️', '💸', '💵'];
+        const emojis = ['🎈', '🎉', '✨', '💎', '👑', '🔥', '💫', '⭐', '🌟', '💝', '🎊', '❤️', '🧡', '💛', '💚', '💙', '💜', '🖤', '🤍', '🤎', '😍', '🥳', '🎯', '🏆', '💎', '👔', '👕', '🛍️', '💸', '💵', '🌈', '⭐', '🦋', '🌸', '🌺', '🎨', '🎪', '🎭', '🎰', '💐'];
         
         const centerX = window.innerWidth / 2;
         const centerY = window.innerHeight / 2 - 50;
         
-        // إنشاء 40 إيموجي (عدد مناسب للهواتف)
-        for (let i = 0; i < 40; i++) {
-            const emoji = document.createElement('div');
-            emoji.className = 'emoji-particle';
-            emoji.textContent = emojis[Math.floor(Math.random() * emojis.length)];
-            
-            const angle = Math.random() * Math.PI * 2;
-            const velocity = 150 + Math.random() * 200;
-            const vx = Math.cos(angle) * velocity;
-            const vy = Math.sin(angle) * velocity - 100;
-            
-            emoji.style.left = centerX + 'px';
-            emoji.style.top = centerY + 'px';
-            emoji.style.fontSize = (Math.random() * 25 + 18) + 'px';
-            
-            document.body.appendChild(emoji);
-            
-            let startTime = null;
-            const startX = centerX;
-            const startY = centerY;
-            
-            function animateEmoji(currentTime) {
-                if (!startTime) startTime = currentTime;
-                const elapsed = (currentTime - startTime) / 1000;
+        // 80 إيموجي رائعة!
+        for (let i = 0; i < 80; i++) {
+            setTimeout(() => {
+                const emoji = document.createElement('div');
+                emoji.className = 'emoji-particle';
+                emoji.textContent = emojis[Math.floor(Math.random() * emojis.length)];
                 
-                if (elapsed >= 1.2) {
-                    emoji.remove();
-                    return;
+                const angle = Math.random() * Math.PI * 2;
+                const velocity = 180 + Math.random() * 250;
+                const vx = Math.cos(angle) * velocity;
+                const vy = Math.sin(angle) * velocity - 120;
+                
+                emoji.style.left = centerX + 'px';
+                emoji.style.top = centerY + 'px';
+                emoji.style.fontSize = (Math.random() * 30 + 20) + 'px';
+                
+                document.body.appendChild(emoji);
+                
+                let startTime = null;
+                const startX = centerX;
+                const startY = centerY;
+                
+                function animateEmoji(currentTime) {
+                    if (!startTime) startTime = currentTime;
+                    const elapsed = (currentTime - startTime) / 1000;
+                    
+                    if (elapsed >= 1.5) {
+                        emoji.remove();
+                        return;
+                    }
+                    
+                    const x = startX + vx * elapsed;
+                    const y = startY + vy * elapsed + 0.5 * 600 * elapsed * elapsed;
+                    emoji.style.transform = `translate(${x - centerX}px, ${y - centerY}px)`;
+                    emoji.style.opacity = 1 - elapsed / 1.5;
+                    
+                    requestAnimationFrame(animateEmoji);
                 }
                 
-                const x = startX + vx * elapsed;
-                const y = startY + vy * elapsed + 0.5 * 500 * elapsed * elapsed;
-                emoji.style.transform = `translate(${x - centerX}px, ${y - centerY}px)`;
-                emoji.style.opacity = 1 - elapsed / 1.2;
-                
                 requestAnimationFrame(animateEmoji);
-            }
-            
-            requestAnimationFrame(animateEmoji);
+            }, i * 6);
         }
         
         showWelcomeMessage();
@@ -657,7 +653,6 @@
         }, 2800);
     }
     
-    // بدء البالونة بعد تحميل الصفحة (أسرع)
     setTimeout(() => {
         createBalloon();
     }, 500);
