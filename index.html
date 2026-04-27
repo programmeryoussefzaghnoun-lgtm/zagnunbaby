@@ -145,7 +145,6 @@
         .img-container:hover img {
             transform: scale(1.05);
         }
-        /* أيقونة التكبير */
         .zoom-icon {
             position: absolute;
             bottom: 10px;
@@ -198,7 +197,6 @@
             color: #aaa;
         }
         
-        /* عداد المنتجات (+ / -) */
         .quantity-control {
             display: flex;
             align-items: center;
@@ -238,7 +236,6 @@
             text-align: center;
         }
         
-        /* سلة التسوق الثابتة */
         .cart-bar {
             position: fixed;
             bottom: 0;
@@ -311,7 +308,6 @@
             font-size: 0.8rem;
         }
         
-        /* لوحة السلة المنبثقة */
         .cart-modal {
             display: none;
             position: fixed;
@@ -399,7 +395,6 @@
             text-align: center;
         }
         
-        /* العنصر المتساقط */
         .falling-item {
             position: fixed;
             width: 40px;
@@ -416,7 +411,6 @@
             box-shadow: 0 0 15px rgba(197,165,114,0.8);
         }
         
-        /* معاينة الصورة (Lightbox) */
         .lightbox {
             display: none;
             position: fixed;
@@ -449,9 +443,6 @@
             border: none;
         }
         
-        .balloon, .emoji-particle, .welcome-message {
-            /* أنماط البالونة والإيموجيات */
-        }
         .balloon {
             position: fixed;
             bottom: 20px;
@@ -510,7 +501,6 @@
             100% { transform: translate(-50%, -50%) scale(1.2); opacity: 0; }
         }
         
-        /* استجابة للموبايل */
         @media (max-width: 768px) {
             .products-grid {
                 grid-template-columns: repeat(2, 1fr);
@@ -522,19 +512,9 @@
             .product-price { font-size: 1.1rem; }
             .qty-btn { width: 24px; height: 24px; font-size: 1rem; }
             .qty-value { font-size: 0.9rem; min-width: 25px; }
-            .cart-container { gap: 8px; }
             .cart-total { font-size: 0.9rem; }
             .checkout-btn { padding: 6px 12px; font-size: 0.8rem; }
-            .clear-cart { padding: 5px 10px; font-size: 0.7rem; }
             .welcome-message { font-size: 0.8rem; padding: 10px 18px; white-space: nowrap; }
-        }
-        
-        @media (max-width: 480px) {
-            .products-grid {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 12px;
-            }
-            .product-info { padding: 0.5rem; }
         }
     </style>
 </head>
@@ -553,7 +533,6 @@
 
 <div class="products-grid" id="productsContainer"></div>
 
-<!-- سلة التسوق -->
 <div class="cart-bar">
     <div class="cart-container">
         <div class="cart-icon" id="cartIcon">
@@ -566,12 +545,11 @@
         </div>
         <div>
             <button class="clear-cart" id="clearCartBtn"><i class="fas fa-trash-alt"></i> تفريغ</button>
-            <button class="checkout-btn" id="checkoutBtn"><i class="fas fa-credit-card"></i> شراء</button>
+            <button class="checkout-btn" id="checkoutBtn"><i class="fab fa-whatsapp"></i> شراء عبر واتساب</button>
         </div>
     </div>
 </div>
 
-<!-- لوحة السلة المنبثقة -->
 <div id="cartModal" class="cart-modal">
     <div class="cart-modal-content">
         <div class="cart-modal-header">
@@ -587,24 +565,74 @@
     </div>
 </div>
 
-<!-- معاينة الصورة (Lightbox) -->
 <div id="lightbox" class="lightbox">
     <button class="close-lightbox" id="closeLightbox">&times;</button>
     <img class="lightbox-img" id="lightboxImg" alt="معاينة المنتج">
 </div>
 
 <script>
+    // =========================================
+    // 🔧 إعدادات واتساب - عدل الرقم هنا
+    // =========================================
+    const WHATSAPP_NUMBER = "905362795002"; // ⬅️ ضع رقم واتساب الخاص بك هنا (بدون +)
+    
     const productImagesList = Array.from({length: 24}, (_, i) => `${i+1}.jpeg`);
+    
+    // أسماء المنتجات باللغة العربية
     const productNames = [
-        "BABY EDITION", "ZAG NUN BABY", "ZAGNUN BABY GOLD", "ZAGNUN BABY PLATINUM",
-        "ZAGNUNBABY BLACK", "B A B Y ICON", "ZAG NUN DELUXE", "ZAGNUN BABY SILVER",
-        "ZAGNUNBABY ROYAL", "BABY LUXE", "ZAGNUN ELITE", "ZAG NUN SUPREME",
-        "ZAGNUN BABY DIAMOND", "BABY GOLD EDITION", "ZAG NUN BLACK", "ZAGNUNBABY WHITE",
-        "ROYAL BABY", "ZAGNUN LEGACY", "BABY EMPIRE", "ZAG NUN VIBES",
-        "ZAGNUNBABY LUXE", "BABY CROWN", "ZAGNUN KINGS", "ZAG NUN FINAL"
+        "النسخة الأساسية", "زاج نون بيبي", "زاجنون بيبي الذهبي", "زاجنون بيبي البلاتيني",
+        "زاجنون بيبي الأسود", "أيقونة بيبي", "زاج نون الفاخر", "زاجنون بيبي الفضي",
+        "زاجنون بيبي الملكي", "بيبي الفاخر", "زاجنون النخبة", "زاج نون الأعلى",
+        "زاجنون بيبي الماسي", "النسخة الذهبية", "زاج نون الأسود", "زاجنون بيبي الأبيض",
+        "بيبي الملكي", "إرث زاجنون", "إمبراطورية بيبي", "أجواء زاج نون",
+        "زاجنون بيبي الفاخر", "تاج بيبي", "ملوك زاجنون", "زاج نون النهائي"
     ];
 
     let cart = {};
+    
+    // دالة إنشاء رسالة الواتساب بشكل أنيق
+    function generateWhatsAppMessage() {
+        let message = "";
+        message += "🛍️ طلب جديد من متجر ZAGNUN BABY 🛍️\n";
+        message += "─────────────────────\n\n";
+        message += "📋 تفاصيل الطلب:\n\n";
+        
+        let totalItems = 0;
+        let totalPrice = 0;
+        let itemNumber = 1;
+        
+        for (let id in cart) {
+            const item = cart[id];
+            const itemTotal = item.quantity * 20;
+            totalItems += item.quantity;
+            totalPrice += itemTotal;
+            
+            message += `${itemNumber} - ${item.name}\n`;
+            message += `   الكمية: ${item.quantity}\n`;
+            message += `   السعر: 20$ × ${item.quantity} = ${itemTotal}$\n\n`;
+            itemNumber++;
+        }
+        
+        message += "─────────────────────\n";
+        message += `📦 إجمالي القطع: ${totalItems}\n`;
+        message += `💰 الإجمالي: ${totalPrice} دولار أمريكي\n\n`;
+        message += "🙏 شكراً لتسوقكم مع ZAGNUN BABY\n";
+        message += "سيتم التواصل معكم لتأكيد الطلب وشحن المنتجات.";
+        
+        return encodeURIComponent(message);
+    }
+    
+    function sendToWhatsApp() {
+        if (Object.keys(cart).length === 0) {
+            alert('⚠️ السلة فارغة! أضف بعض المنتجات أولاً.');
+            return false;
+        }
+        
+        const message = generateWhatsAppMessage();
+        const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${message}`;
+        window.open(whatsappUrl, '_blank');
+        return true;
+    }
     
     function updateCartUI() {
         let totalItems = 0, totalPrice = 0;
@@ -693,7 +721,6 @@
         }, 600);
     }
     
-    // معاينة الصورة
     function openLightbox(imageSrc) {
         const lightbox = document.getElementById('lightbox');
         const lightboxImg = document.getElementById('lightboxImg');
@@ -705,15 +732,12 @@
         document.getElementById('lightbox').style.display = 'none';
     }
     
-    // عرض المنتجات
     const container = document.getElementById('productsContainer');
     
     function renderProducts() {
         container.innerHTML = '';
         productNames.forEach((name, idx) => {
             let displayTitle = name;
-            if(idx === 4) displayTitle = "ZAGNUNBABY BLACK";
-            if(idx === 9) displayTitle = "BABY LUXURY";
             let imagePath = `images/${productImagesList[idx % productImagesList.length]}`;
             const productId = `product_${idx}`;
             
@@ -737,7 +761,6 @@
             
             container.appendChild(card);
             
-            // معاينة الصورة عند النقر
             const imgContainer = card.querySelector('.img-container');
             imgContainer.addEventListener('click', (e) => {
                 e.stopPropagation();
@@ -745,7 +768,6 @@
                 openLightbox(imgSrc);
             });
             
-            // أزرار + و -
             const minusBtn = card.querySelector('.minus-btn');
             const plusBtn = card.querySelector('.plus-btn');
             const qtySpan = document.getElementById(`qty_${productId}`);
@@ -775,28 +797,24 @@
         document.getElementById('cartModal').style.display = 'none';
     });
     document.getElementById('clearCartBtn').addEventListener('click', () => {
-        cart = {};
-        updateCartUI();
-        updateAllProductDisplays();
-    });
-    document.getElementById('checkoutBtn').addEventListener('click', () => {
-        if (Object.keys(cart).length === 0) {
-            alert('السلة فارغة! أضف منتجات أولاً.');
-            return;
+        if (confirm('هل تريد تفريغ السلة بالكامل؟')) {
+            cart = {};
+            updateCartUI();
+            updateAllProductDisplays();
         }
-        document.getElementById('cartModal').style.display = 'none';
-        alert('شكراً لتسوقك مع ZAGNUN BABY! 🛍️✨ سيتم تأكيد طلبك قريباً.');
-        cart = {};
-        updateCartUI();
-        updateAllProductDisplays();
     });
+    
+    document.getElementById('checkoutBtn').addEventListener('click', () => {
+        document.getElementById('cartModal').style.display = 'none';
+        sendToWhatsApp();
+    });
+    
     document.getElementById('cartModal').addEventListener('click', (e) => {
         if (e.target === document.getElementById('cartModal')) {
             document.getElementById('cartModal').style.display = 'none';
         }
     });
     
-    // إغلاق معاينة الصورة
     document.getElementById('closeLightbox').addEventListener('click', closeLightbox);
     document.getElementById('lightbox').addEventListener('click', (e) => {
         if (e.target === document.getElementById('lightbox')) closeLightbox();
